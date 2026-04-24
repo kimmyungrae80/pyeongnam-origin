@@ -1,0 +1,79 @@
+/* src/app/globals.css */
+
+@import "tailwindcss";
+
+:root {
+  --color-primary: #534AB7;
+  --color-primary-light: #EEEDFE;
+  --color-teal: #0F6E56;
+  --color-teal-light: #E1F5EE;
+  --color-coral: #993C1D;
+  --color-coral-light: #FAECE7;
+  --color-amber: #BA7517;
+  --color-amber-light: #FAEEDA;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-purple-700 text-white px-6 py-2.5 rounded-full text-sm font-medium
+           hover:bg-purple-800 transition-colors cursor-pointer;
+  }
+
+  .btn-outline {
+    @apply border border-purple-700 text-purple-700 px-6 py-2.5 rounded-full text-sm font-medium
+           hover:bg-purple-50 transition-colors cursor-pointer;
+  }
+
+  .btn-ghost {
+    @apply text-gray-600 px-4 py-2 rounded-lg text-sm
+           hover:bg-gray-100 transition-colors cursor-pointer;
+  }
+
+  .card {
+    @apply bg-white border border-gray-100 rounded-2xl p-5 shadow-sm;
+  }
+
+  .card-hover {
+    @apply bg-white border border-gray-100 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-gray-200 transition-all cursor-pointer;
+  }
+
+  .badge-track-storytelling {
+    @apply bg-purple-50 text-purple-800 text-xs px-2.5 py-1 rounded-full font-medium;
+  }
+
+  .badge-track-lifestyle {
+    @apply bg-orange-50 text-orange-800 text-xs px-2.5 py-1 rounded-full font-medium;
+  }
+
+  .badge-track-digital {
+    @apply bg-teal-50 text-teal-800 text-xs px-2.5 py-1 rounded-full font-medium;
+  }
+
+  .badge-track-free {
+    @apply bg-amber-50 text-amber-800 text-xs px-2.5 py-1 rounded-full font-medium;
+  }
+
+  .input-base {
+    @apply w-full border border-gray-200 rounded-xl px-4 py-3 text-sm
+           focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400
+           placeholder:text-gray-400 transition-all;
+  }
+
+  .label-base {
+    @apply block text-sm font-medium text-gray-700 mb-1.5;
+  }
+
+  .section-title {
+    @apply text-2xl font-medium text-gray-900 mb-1;
+  }
+
+  .section-sub {
+    @apply text-sm text-gray-500 mb-6;
+  }
+}
