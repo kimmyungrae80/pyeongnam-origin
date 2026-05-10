@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     supabase.from('rankings').select('*').eq('id', user.id).single(),
   ])
 
-  if (!profile) redirect('/onboarding')
+  if (!profile || !profile.generation || !profile.track) redirect('/onboarding')
 
   const approvedCount = submissions?.filter(s => s.status === 'approved').length ?? 0
   const totalMissions = 10 // 전체 미션 수

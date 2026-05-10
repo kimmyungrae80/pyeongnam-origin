@@ -15,6 +15,7 @@ export default function OnboardingPage() {
   const supabase = createClient()
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const [form, setForm] = useState({
     generation: null as Generation | null,
@@ -29,15 +30,14 @@ export default function OnboardingPage() {
 
   const handleComplete = async () => {
     setLoading(true)
+    setError('')
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth'); return }
 
-      // 1. 가문 생성 또는 초대 코드로 합류
       let family_id: string | null = null
 
       if (form.invite_code) {
-        // 초대 코드로 기존 가문 합류
         const { data: family } = await supabase
           .from('families')
           .select('id')
@@ -45,8 +45,7 @@ export default function OnboardingPage() {
           .single()
         if (family) family_id = family.id
       } else if (form.family_name) {
-        // 새 가문 생성
-        const { data: family } = await supabase
+        const { data: family, error: familyErr } = await supabase
           .from('families')
           .insert({
             name: form.family_name,
@@ -55,21 +54,28 @@ export default function OnboardingPage() {
           })
           .select()
           .single()
-        if (family) family_id = family.id
+        if (familyErr) setError('가문 생성 오류: ' + familyErr.message)
+        else if (family) family_id = family.id
       }
 
-      // 2. 프로필 업데이트
-      await supabase.from('profiles').update({
+      const { error: profileErr } = await supabase.from('profiles').upsert({
+        id: user.id,
+        name: user.user_metadata?.name || '이름없음',
         generation: form.generation,
         origin_region: form.origin_region,
         track: form.track,
         family_id,
         updated_at: new Date().toISOString(),
-      }).eq('id', user.id)
+      })
+
+      if (profileErr) {
+        setError('프로필 저장 오류: ' + profileErr.message)
+        return
+      }
 
       router.push('/dashboard')
-    } catch (err) {
-      console.error(err)
+    } catch (err: any) {
+      setError(err.message || '오류가 발생했습니다')
     } finally {
       setLoading(false)
     }
@@ -241,6 +247,12 @@ export default function OnboardingPage() {
                   </button>
                 ))}
               </div>
+
+              {error && (
+                <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">
+                  {error}
+                </div>
+              )}
 
               <div className="flex gap-3">
                 <button onClick={prev} className="flex-1 btn-ghost border border-gray-200">← 이전</button>
