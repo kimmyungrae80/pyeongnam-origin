@@ -271,7 +271,7 @@ export default async function HomePage() {
               <div className="font-medium text-gray-900 mb-2">평남 오리진 플랫폼</div>
               <div className="text-sm text-gray-400 leading-relaxed">
                 평안남도 제3·4세대 뿌리이음 프로젝트<br />
-                평안남도청 주관
+                평안남도 주관
               </div>
             </div>
             <div className="flex gap-8 text-sm text-gray-500">
@@ -293,7 +293,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="max-w-5xl mx-auto mt-8 pt-6 border-t border-gray-200 text-center text-xs text-gray-400">
-            © 2026 평안남도청. All rights reserved.
+            © 2026 평안남도. All rights reserved.
           </div>
         </footer>
       </main>
