@@ -3,14 +3,14 @@
 // src/app/submit/page.tsx
 // P7 - 콘텐츠 제출
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import { createClient } from '@/lib/supabase/client'
 import { TRACK_EMOJIS, TRACK_LABELS, type Mission, type ContentType, type Track } from '@/lib/types'
 
-export default function SubmitPage() {
+function SubmitForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
@@ -293,5 +293,13 @@ export default function SubmitPage() {
         </div>
       </main>
     </>
+  )
+}
+
+export default function SubmitPage() {
+  return (
+    <Suspense>
+      <SubmitForm />
+    </Suspense>
   )
 }
