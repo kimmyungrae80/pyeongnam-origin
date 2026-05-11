@@ -175,7 +175,7 @@ export default async function HomePage() {
               여러분 안에 흐르는 특별한 에너지를 발견하는 소중한 시간입니다."
             </blockquote>
             <div className="text-center text-gray-400 text-sm">
-              — 2026년 3월, 평안남도지사 정경조
+              — 평안남도지사 정경조
             </div>
           </div>
         </section>
