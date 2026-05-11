@@ -47,15 +47,15 @@ function AuthForm() {
         })
         if (signInError) throw signInError
 
-        router.push('/onboarding')
+        router.push('/')
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: form.email,
           password: form.password,
         })
         if (error) throw error
-        const redirect = searchParams.get('redirect') || '/dashboard'
-        router.push(redirect)
+        const redirectTo = searchParams.get('redirect') || '/'
+        router.push(redirectTo)
       }
     } catch (err: any) {
       if (err.message.includes('Invalid login credentials')) {

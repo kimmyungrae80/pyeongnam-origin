@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     supabase.from('rankings').select('*').eq('id', user.id).single(),
   ])
 
-  if (!profile || !profile.onboarding_completed) redirect('/onboarding')
+  // 온보딩은 강제하지 않음 — 프로필 미완성 시 배너 표시
 
   const approvedCount = submissions?.filter(s => s.status === 'approved').length ?? 0
   const totalMissions = 10 // 전체 미션 수
@@ -49,21 +49,37 @@ export default async function DashboardPage() {
       <main className="pt-16 min-h-screen bg-gray-50">
         <div className="max-w-5xl mx-auto px-4 py-8">
 
+          {/* 프로필 미완성 배너 */}
+          {!profile?.onboarding_completed && (
+            <div className="mb-6 bg-purple-50 border border-purple-200 rounded-2xl px-5 py-4 flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-purple-900">프로필을 완성하면 더 많은 기능을 사용할 수 있어요</p>
+                <p className="text-xs text-purple-600 mt-0.5">세대·출신지역·탐사 트랙을 설정해보세요</p>
+              </div>
+              <Link
+                href="/onboarding"
+                className="flex-shrink-0 bg-purple-700 text-white text-sm font-medium px-4 py-2 rounded-xl hover:bg-purple-800 transition-colors"
+              >
+                프로필 설정하기 →
+              </Link>
+            </div>
+          )}
+
           {/* 헤더 */}
           <div className="mb-8">
             <h1 className="text-2xl font-medium text-gray-900">
-              안녕하세요, {profile.name}님 👋
+              안녕하세요, {profile?.name ?? '회원'}님 👋
             </h1>
             <p className="text-sm text-gray-500 mt-1">
-              {profile.origin_region ? `${profile.origin_region} 출신` : '지역 미설정'} ·{' '}
-              {profile.track ? TRACK_EMOJIS[profile.track as Track] + ' ' + TRACK_LABELS[profile.track as Track] : '트랙 미설정'}
+              {profile?.origin_region ? `${profile.origin_region} 출신` : '지역 미설정'} ·{' '}
+              {profile?.track ? TRACK_EMOJIS[profile.track as Track] + ' ' + TRACK_LABELS[profile.track as Track] : '트랙 미설정'}
             </p>
           </div>
 
           {/* 상단 통계 카드 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="card text-center">
-              <div className="text-2xl font-medium text-purple-700">{profile.points.toLocaleString()}</div>
+              <div className="text-2xl font-medium text-purple-700">{(profile?.points ?? 0).toLocaleString()}</div>
               <div className="text-xs text-gray-400 mt-1">누적 포인트</div>
             </div>
             <div className="card text-center">

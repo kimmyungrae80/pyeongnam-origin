@@ -3,7 +3,7 @@
 // src/app/onboarding/page.tsx
 // P4-2 - 온보딩 (회원가입 후 프로필 설정)
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { PYEONGNAM_REGIONS, TRACK_EMOJIS, TRACK_LABELS, type Track, type Generation } from '@/lib/types'
@@ -25,21 +25,7 @@ export default function OnboardingPage() {
     invite_code: '',
   })
 
-  useEffect(() => {
-    const checkAlreadyOnboarded = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('onboarding_completed')
-        .eq('id', user.id)
-        .single()
-      if (profile?.onboarding_completed) {
-        router.replace('/dashboard')
-      }
-    }
-    checkAlreadyOnboarded()
-  }, [])
+  // 온보딩은 선택 사항 — 강제 리다이렉트 없음
 
   const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1))
   const prev = () => setStep((s) => Math.max(s - 1, 0))
