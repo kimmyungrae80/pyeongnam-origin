@@ -54,6 +54,19 @@ function AuthForm() {
           password: form.password,
         })
         if (error) throw error
+
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('generation, track')
+            .eq('id', user.id)
+            .single()
+          if (!profile?.generation || !profile?.track) {
+            router.push('/onboarding')
+            return
+          }
+        }
         const redirect = searchParams.get('redirect') || '/dashboard'
         router.push(redirect)
         router.refresh()
