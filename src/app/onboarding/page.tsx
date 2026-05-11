@@ -28,13 +28,13 @@ export default function OnboardingPage() {
   useEffect(() => {
     const checkAlreadyOnboarded = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return  // 미인증 유저는 이 페이지에서 폼만 보여줌
+      if (!user) return
       const { data: profile } = await supabase
         .from('profiles')
-        .select('generation, track')
+        .select('onboarding_completed')
         .eq('id', user.id)
         .single()
-      if (profile?.generation && profile?.track) {
+      if (profile?.onboarding_completed) {
         router.replace('/dashboard')
       }
     }
@@ -81,11 +81,24 @@ export default function OnboardingPage() {
         origin_region: form.origin_region,
         track: form.track,
         family_id,
+        onboarding_completed: true,
         updated_at: new Date().toISOString(),
       })
 
       if (profileErr) {
         setError('프로필 저장 오류: ' + profileErr.message)
+        return
+      }
+
+      // 저장 실제 확인 (RLS 조용한 실패 방어)
+      const { data: saved } = await supabase
+        .from('profiles')
+        .select('onboarding_completed')
+        .eq('id', user.id)
+        .single()
+
+      if (!saved?.onboarding_completed) {
+        setError('프로필 저장에 실패했습니다. 페이지를 새로고침 후 다시 시도해주세요.')
         return
       }
 

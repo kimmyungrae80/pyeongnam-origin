@@ -1,7 +1,17 @@
-// middleware.ts (프로젝트 루트에 위치)
+// middleware.ts
 
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+
+// 세션 쿠키를 redirect 응답에 복사 (세션 유지 핵심)
+function redirectWithSession(to: string, request: NextRequest, supabaseResponse: NextResponse) {
+  const url = request.nextUrl.clone()
+  url.pathname = to
+  url.search = ''
+  const res = NextResponse.redirect(url)
+  supabaseResponse.cookies.getAll().forEach(c => res.cookies.set(c.name, c.value, c))
+  return res
+}
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
@@ -15,9 +25,7 @@ export async function middleware(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
@@ -28,36 +36,46 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
+  const pathname = request.nextUrl.pathname
 
-  // 로그인이 필요한 페이지들
   const protectedPaths = ['/dashboard', '/missions', '/submit', '/admin']
-  const isProtected = protectedPaths.some(path =>
-    request.nextUrl.pathname.startsWith(path)
-  )
+  const isProtected = protectedPaths.some(p => pathname.startsWith(p))
 
-  // 로그인 안 된 상태로 보호된 페이지 접근 시 로그인 페이지로
+  // 1. 미인증 → 보호된 경로 접근 시 로그인 페이지로
   if (!user && isProtected) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth'
-    url.searchParams.set('redirect', request.nextUrl.pathname)
-    return NextResponse.redirect(url)
+    url.search = ''
+    url.searchParams.set('redirect', pathname)
+    const res = NextResponse.redirect(url)
+    supabaseResponse.cookies.getAll().forEach(c => res.cookies.set(c.name, c.value, c))
+    return res
   }
 
-  // 이미 로그인된 상태로 auth 페이지 접근 시 대시보드로
-  if (user && request.nextUrl.pathname === '/auth') {
-    const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
-    return NextResponse.redirect(url)
-  }
+  // 2. 인증된 사용자: onboarding_completed 확인 (보호된 경로 or /onboarding 접근 시만)
+  if (user && (isProtected || pathname === '/onboarding')) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('onboarding_completed')
+      .eq('id', user.id)
+      .single()
 
-  // 관리자 페이지 접근 제한
-  if (request.nextUrl.pathname.startsWith('/admin')) {
-    if (!user) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/auth'
-      return NextResponse.redirect(url)
+    const completed = profile?.onboarding_completed === true
+
+    // 온보딩 미완료인데 대시보드 등 접근 → 온보딩으로
+    if (!completed && isProtected) {
+      return redirectWithSession('/onboarding', request, supabaseResponse)
     }
-    // 관리자 여부는 페이지에서 추가 확인
+
+    // 온보딩 완료했는데 /onboarding 접근 → 대시보드로
+    if (completed && pathname === '/onboarding') {
+      return redirectWithSession('/dashboard', request, supabaseResponse)
+    }
+  }
+
+  // 3. 이미 로그인된 상태로 /auth 접근 → 대시보드로
+  if (user && pathname === '/auth') {
+    return redirectWithSession('/dashboard', request, supabaseResponse)
   }
 
   return supabaseResponse
