@@ -50,20 +50,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // 온보딩 완료한 유저가 /onboarding 재방문 시 대시보드로
-  if (user && request.nextUrl.pathname === '/onboarding') {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('generation, track')
-      .eq('id', user.id)
-      .single()
-    if (profile?.generation && profile?.track) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/dashboard'
-      return NextResponse.redirect(url)
-    }
-  }
-
   // 관리자 페이지 접근 제한
   if (request.nextUrl.pathname.startsWith('/admin')) {
     if (!user) {
