@@ -58,7 +58,7 @@ export default async function HomePage() {
         {/* 히어로 섹션 */}
         <section className="bg-gradient-to-br from-purple-50 via-white to-teal-50 px-4 py-24 text-center">
           <div className="max-w-3xl mx-auto">
-            <div className="inline-block bg-purple-100 text-purple-700 text-xs font-medium px-4 py-1.5 rounded-full mb-6">
+            <div className="inline-block bg-purple-100 text-purple-700 text-base font-semibold px-6 py-2.5 rounded-full mb-6 tracking-tight">
               2026 평안남도 제3·4세대 뿌리이음 프로젝트
             </div>
 
@@ -67,9 +67,12 @@ export default async function HomePage() {
               <span className="text-purple-700">우리의 오리진</span>
             </h1>
 
-            <p className="text-lg text-gray-500 mb-10 leading-relaxed max-w-xl mx-auto">
-              할아버지의 보관함 속 보물을 찾아내고,<br />
+            <p className="text-lg text-gray-500 leading-relaxed max-w-xl mx-auto">
+              할아버지의 보관함 속 보물을 찾고,<br />
               우리 가문의 이야기를 나만의 언어로 다시 씁니다.
+            </p>
+            <p className="text-base font-medium text-purple-700 mt-4 mb-10">
+              우리가 찾아가는 평남의 뿌리 찾기
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -292,8 +295,9 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-          <div className="max-w-5xl mx-auto mt-8 pt-6 border-t border-gray-200 text-center text-xs text-gray-400">
-            © 2026 평안남도. All rights reserved.
+          <div className="max-w-5xl mx-auto mt-8 pt-6 border-t border-gray-200 text-center text-xs text-gray-400 space-y-1">
+            <div>관리자 · 평안남도 비서실 정책보좌 김명래</div>
+            <div>© 2026 평안남도. All rights reserved.</div>
           </div>
         </footer>
       </main>
