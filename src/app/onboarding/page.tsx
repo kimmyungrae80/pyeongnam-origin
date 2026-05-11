@@ -28,7 +28,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     const checkAlreadyOnboarded = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { router.replace('/auth'); return }
+      if (!user) return  // 미인증 유저는 이 페이지에서 폼만 보여줌
       const { data: profile } = await supabase
         .from('profiles')
         .select('generation, track')
