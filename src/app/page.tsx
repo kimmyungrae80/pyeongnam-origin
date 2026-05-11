@@ -174,8 +174,8 @@ export default async function HomePage() {
               다시 써 내려가야 합니다. 이 여정은 단순히 과거를 찾는 일이 아니라,<br className="hidden md:block" />
               여러분 안에 흐르는 특별한 에너지를 발견하는 소중한 시간입니다."
             </blockquote>
-            <div className="text-center text-gray-400 text-sm">
-              — 평안남도지사 정경조
+            <div className="text-center text-gray-300 text-base font-medium">
+              평안남도지사 정경조
             </div>
           </div>
         </section>
