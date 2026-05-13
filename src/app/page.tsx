@@ -216,6 +216,19 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* FAQ 바로가기 */}
+        <section className="max-w-4xl mx-auto px-4 pb-4">
+          <div className="bg-purple-50 border border-purple-100 rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div>
+              <p className="font-medium text-gray-900 text-sm">참여 방법이 궁금하신가요?</p>
+              <p className="text-xs text-gray-500 mt-0.5">심사 방법, 시상 일정, 영상 제출 방법 등 자주 묻는 질문을 확인하세요.</p>
+            </div>
+            <Link href="/faq" className="flex-shrink-0 btn-primary text-sm px-5 py-2">
+              FAQ 보기 →
+            </Link>
+          </div>
+        </section>
+
         {/* 시상 안내 */}
         <section className="bg-purple-50 px-4 py-16">
           <div className="max-w-3xl mx-auto text-center">
@@ -283,7 +296,7 @@ export default async function HomePage() {
                 <div className="space-y-1">
                   <Link href="/archive" className="block hover:text-purple-700">아카이브</Link>
                   <Link href="/missions" className="block hover:text-purple-700">미션</Link>
-                  <Link href="/showcase" className="block hover:text-purple-700">쇼케이스</Link>
+                  <Link href="/faq" className="block hover:text-purple-700">자주 묻는 질문</Link>
                 </div>
               </div>
               <div>

@@ -38,7 +38,7 @@ export default function Navbar() {
   const navLinks = [
     { href: '/archive', label: '아카이브' },
     { href: '/missions', label: '미션' },
-    { href: '/showcase', label: '쇼케이스' },
+    { href: '/faq', label: 'FAQ' },
   ]
 
   return (

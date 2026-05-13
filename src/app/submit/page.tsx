@@ -1,7 +1,6 @@
 'use client'
 
 // src/app/submit/page.tsx
-// P7 - 콘텐츠 제출
 
 import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -9,6 +8,19 @@ import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import { createClient } from '@/lib/supabase/client'
 import { TRACK_EMOJIS, TRACK_LABELS, type Mission, type ContentType, type Track } from '@/lib/types'
+
+const VIDEO_PLATFORMS = [
+  { name: 'YouTube', pattern: /youtube\.com|youtu\.be/, placeholder: 'https://youtu.be/...' },
+  { name: 'Instagram', pattern: /instagram\.com/, placeholder: 'https://www.instagram.com/reel/...' },
+  { name: 'TikTok', pattern: /tiktok\.com/, placeholder: 'https://www.tiktok.com/@...' },
+]
+
+function detectVideoPlatform(url: string) {
+  for (const p of VIDEO_PLATFORMS) {
+    if (p.pattern.test(url)) return p.name
+  }
+  return null
+}
 
 function SubmitForm() {
   const router = useRouter()
@@ -20,6 +32,7 @@ function SubmitForm() {
   const [uploading, setUploading] = useState(false)
   const [files, setFiles] = useState<File[]>([])
   const [fileUrls, setFileUrls] = useState<string[]>([])
+  const [videoUrl, setVideoUrl] = useState('')
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
 
@@ -36,7 +49,6 @@ function SubmitForm() {
         .then(({ data }) => {
           if (data) {
             setMission(data)
-            // 미션 제목으로 기본값
             setForm(f => ({ ...f, title: data.title }))
           }
         })
@@ -46,6 +58,13 @@ function SubmitForm() {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files ?? [])
     if (selected.length === 0) return
+
+    const MAX_MB = 20
+    const oversized = selected.filter(f => f.size > MAX_MB * 1024 * 1024)
+    if (oversized.length > 0) {
+      setError(`파일 크기는 ${MAX_MB}MB 이하만 가능합니다: ${oversized.map(f => f.name).join(', ')}`)
+      return
+    }
 
     setFiles(selected)
     setUploading(true)
@@ -78,30 +97,43 @@ function SubmitForm() {
     }
   }
 
+  const getEffectiveFileUrls = () => {
+    if (form.content_type === 'video') {
+      return videoUrl ? [videoUrl] : []
+    }
+    return fileUrls
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
+    if (form.content_type === 'video' && !videoUrl.trim()) {
+      setError('영상 링크를 입력해주세요.')
+      setLoading(false)
+      return
+    }
+
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth'); return }
 
-      // 제출물 저장
+      const effectiveUrls = getEffectiveFileUrls()
+
       const { error: submitError } = await supabase.from('submissions').insert({
         user_id: user.id,
         mission_id: mission?.id ?? null,
         title: form.title,
         content: form.content,
-        file_urls: fileUrls.length > 0 ? fileUrls : null,
+        file_urls: effectiveUrls.length > 0 ? effectiveUrls : null,
         content_type: form.content_type,
         status: 'submitted',
       })
 
       if (submitError) throw submitError
 
-      // 아카이브에도 저장 (공개 콘텐츠)
-      if (fileUrls.length > 0 || form.content) {
+      if (effectiveUrls.length > 0 || form.content) {
         const { data: profile } = await supabase
           .from('profiles')
           .select('family_id, origin_region')
@@ -114,7 +146,7 @@ function SubmitForm() {
           title: form.title,
           description: form.content,
           content_type: form.content_type,
-          file_urls: fileUrls.length > 0 ? fileUrls : null,
+          file_urls: effectiveUrls.length > 0 ? effectiveUrls : null,
           region_tag: profile?.origin_region ?? null,
           is_public: true,
         })
@@ -127,6 +159,14 @@ function SubmitForm() {
       setLoading(false)
     }
   }
+
+  const isVideoType = form.content_type === 'video'
+  const detectedPlatform = videoUrl ? detectVideoPlatform(videoUrl) : null
+  const isVideoUrlValid = videoUrl.startsWith('http') && detectedPlatform !== null
+
+  const canSubmit = !!form.title && !loading && !uploading && (
+    isVideoType ? !!videoUrl.trim() : true
+  )
 
   if (success) {
     return (
@@ -184,20 +224,26 @@ function SubmitForm() {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* 콘텐츠 유형 */}
               <div>
-                <label className="label-base">콘텐츠 유형</label>
+                <label className="label-base">
+                  콘텐츠 유형
+                  <span className="ml-1.5 text-gray-400 font-normal text-xs">— 영상은 링크 제출, 사진은 직접 업로드</span>
+                </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { value: 'photo', label: '📸 사진', },
-                    { value: 'video', label: '🎬 영상', },
-                    { value: 'essay', label: '📝 에세이', },
-                    { value: 'design', label: '🎨 디자인', },
-                    { value: 'map', label: '🗺 지도', },
-                    { value: 'other', label: '기타', },
+                    { value: 'photo', label: '📸 사진' },
+                    { value: 'video', label: '🎬 영상' },
+                    { value: 'essay', label: '📝 에세이' },
+                    { value: 'design', label: '🎨 디자인' },
+                    { value: 'map', label: '🗺 지도' },
+                    { value: 'other', label: '기타' },
                   ].map(({ value, label }) => (
                     <button
                       key={value}
                       type="button"
-                      onClick={() => setForm({ ...form, content_type: value as ContentType })}
+                      onClick={() => {
+                        setForm({ ...form, content_type: value as ContentType })
+                        setError('')
+                      }}
                       className={`px-4 py-2 rounded-xl text-sm border transition-all ${
                         form.content_type === value
                           ? 'border-purple-700 bg-purple-50 text-purple-700'
@@ -223,36 +269,76 @@ function SubmitForm() {
                 />
               </div>
 
-              {/* 파일 업로드 */}
-              <div>
-                <label className="label-base">파일 업로드 (선택)</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-purple-300 transition-colors">
+              {/* 영상: URL 입력 / 사진 및 기타: 파일 업로드 */}
+              {isVideoType ? (
+                <div>
+                  <label className="label-base">영상 링크 <span className="text-red-400">*</span></label>
                   <input
-                    type="file"
-                    multiple
-                    accept="image/*,video/*,.pdf"
-                    onChange={handleFileChange}
-                    className="hidden"
-                    id="file-upload"
+                    type="url"
+                    className={`input-base ${videoUrl && !isVideoUrlValid ? 'border-red-300 focus:ring-red-400' : ''}`}
+                    placeholder="https://youtu.be/... 또는 인스타그램·틱톡 링크"
+                    value={videoUrl}
+                    onChange={(e) => setVideoUrl(e.target.value)}
                   />
-                  <label htmlFor="file-upload" className="cursor-pointer">
-                    {uploading ? (
-                      <div className="text-gray-500 text-sm">업로드 중...</div>
-                    ) : files.length > 0 ? (
-                      <div>
-                        <div className="text-green-600 text-sm mb-1">✓ {files.length}개 파일 준비됨</div>
-                        <div className="text-xs text-gray-400">{files.map(f => f.name).join(', ')}</div>
-                      </div>
-                    ) : (
-                      <div>
-                        <div className="text-3xl mb-2">📎</div>
-                        <div className="text-sm text-gray-500">클릭하여 파일 선택</div>
-                        <div className="text-xs text-gray-400 mt-1">사진, 영상, PDF 가능</div>
-                      </div>
-                    )}
-                  </label>
+                  {/* 플랫폼 감지 피드백 */}
+                  {videoUrl && (
+                    <p className={`text-xs mt-1 ${isVideoUrlValid ? 'text-green-600' : 'text-amber-600'}`}>
+                      {isVideoUrlValid
+                        ? `✓ ${detectedPlatform} 링크 확인됨`
+                        : '⚠ YouTube, Instagram, TikTok 링크만 지원됩니다'}
+                    </p>
+                  )}
+                  {!videoUrl && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {VIDEO_PLATFORMS.map(p => (
+                        <span key={p.name} className="text-xs bg-gray-100 text-gray-500 px-2.5 py-1 rounded-full">
+                          {p.name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-400 mt-2">
+                    영상을 직접 업로드하지 않고, 게시된 링크를 공유하는 방식입니다.
+                  </p>
                 </div>
-              </div>
+              ) : (
+                <div>
+                  <label className="label-base">
+                    파일 업로드
+                    {form.content_type === 'photo' && <span className="text-gray-400 font-normal ml-1">— JPG, PNG, GIF (최대 20MB)</span>}
+                    {form.content_type !== 'photo' && <span className="text-gray-400 font-normal ml-1">(선택)</span>}
+                  </label>
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-purple-300 transition-colors">
+                    <input
+                      type="file"
+                      multiple={form.content_type === 'photo'}
+                      accept={form.content_type === 'photo' ? 'image/*' : 'image/*,.pdf'}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <label htmlFor="file-upload" className="cursor-pointer">
+                      {uploading ? (
+                        <div className="text-gray-500 text-sm">업로드 중...</div>
+                      ) : files.length > 0 ? (
+                        <div>
+                          <div className="text-green-600 text-sm mb-1">✓ {files.length}개 파일 준비됨</div>
+                          <div className="text-xs text-gray-400">{files.map(f => f.name).join(', ')}</div>
+                          <div className="text-xs text-purple-600 mt-2 underline">다른 파일 선택</div>
+                        </div>
+                      ) : (
+                        <div>
+                          <div className="text-3xl mb-2">📎</div>
+                          <div className="text-sm text-gray-500">클릭하여 파일 선택</div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            {form.content_type === 'photo' ? '사진 여러 장 선택 가능' : '사진, PDF 가능'}
+                          </div>
+                        </div>
+                      )}
+                    </label>
+                  </div>
+                </div>
+              )}
 
               {/* 내용 */}
               <div>
@@ -266,6 +352,13 @@ function SubmitForm() {
                   onChange={(e) => setForm({ ...form, content: e.target.value })}
                   rows={5}
                 />
+              </div>
+
+              {/* 도움말 */}
+              <div className="bg-gray-50 rounded-xl px-4 py-3 text-xs text-gray-500 space-y-1">
+                <p>💡 <strong>심사 기준:</strong> 평안남도와의 연결성, 창의성, 탐사 과정의 진정성</p>
+                <p>📅 <strong>심사 기간:</strong> 제출 후 1~3일 내 결과 통보</p>
+                <p>❓ 궁금한 점은 <Link href="/faq" className="text-purple-700 underline">FAQ</Link>를 확인하세요.</p>
               </div>
 
               {/* 에러 */}
@@ -282,10 +375,10 @@ function SubmitForm() {
                 </Link>
                 <button
                   type="submit"
-                  disabled={loading || uploading || (!form.title)}
+                  disabled={!canSubmit}
                   className="flex-1 btn-primary py-3 text-base disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  {loading ? '제출 중...' : '제출하기 →'}
+                  {loading ? '제출 중...' : uploading ? '업로드 중...' : '제출하기 →'}
                 </button>
               </div>
             </form>

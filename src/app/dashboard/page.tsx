@@ -51,10 +51,10 @@ export default async function DashboardPage() {
 
           {/* 프로필 미완성 배너 */}
           {!profile?.onboarding_completed && (
-            <div className="mb-6 bg-purple-50 border border-purple-200 rounded-2xl px-5 py-4 flex items-center justify-between gap-4">
+            <div className="mb-6 bg-purple-50 border border-purple-200 rounded-2xl px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
               <div>
-                <p className="text-sm font-medium text-purple-900">프로필을 완성하면 더 많은 기능을 사용할 수 있어요</p>
-                <p className="text-xs text-purple-600 mt-0.5">세대·출신지역·탐사 트랙을 설정해보세요</p>
+                <p className="text-sm font-medium text-purple-900">프로필을 완성하면 맞춤 미션 추천을 받을 수 있어요</p>
+                <p className="text-xs text-purple-600 mt-0.5">세대·출신지역·탐사 트랙을 설정해보세요 · <Link href="/faq" className="underline">참여 방법 FAQ</Link></p>
               </div>
               <Link
                 href="/onboarding"

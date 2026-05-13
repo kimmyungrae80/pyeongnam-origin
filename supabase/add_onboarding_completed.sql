@@ -4,7 +4,7 @@
 
 -- 1. onboarding_completed 컬럼 추가
 ALTER TABLE profiles
-  ADD COLUMN IF NOT EXISTS onboarding_completed boolean NOT NULL DEFAULT false;
+  ADD COLUMN IF NOT EXISTS onboarding_completed boolean DEFAULT false;
 
 -- 2. INSERT RLS 정책 추가 (트리거 미실행 시 upsert가 INSERT 시도해도 작동하도록)
 DROP POLICY IF EXISTS "본인 프로필 생성 가능" ON profiles;
