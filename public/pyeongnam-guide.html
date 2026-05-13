@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>평남 오리진 — 참여 안내문</title>
+  <style>
+    /* ── 기본 설정 ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+      background: #fff;
+      color: #111;
+      font-size: 11pt;
+      line-height: 1.5;
+    }
+
+    /* ── 화면 미리보기 ── */
+    @media screen {
+      body { background: #f3f3f3; display: flex; justify-content: center; padding: 2rem; }
+      .page { background: white; width: 210mm; min-height: 297mm; padding: 16mm 16mm 12mm; box-shadow: 0 4px 24px rgba(0,0,0,.15); }
+    }
+
+    /* ── 인쇄 설정 ── */
+    @media print {
+      @page { size: A4; margin: 14mm 14mm 12mm; }
+      body { background: white; }
+      .page { width: 100%; padding: 0; }
+      .no-print { display: none !important; }
+    }
+
+    /* ── 레이아웃 헬퍼 ── */
+    .row { display: flex; gap: 12px; }
+    .col { flex: 1; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+
+    /* ── 헤더 ── */
+    .header {
+      background: linear-gradient(135deg, #5b21b6 0%, #4f46e5 60%, #0d9488 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 14px 18px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-box {
+      width: 38px; height: 38px;
+      background: rgba(255,255,255,.2);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
+    }
+    .header h1 { font-size: 18pt; font-weight: 700; letter-spacing: -0.5px; }
+    .header .sub { font-size: 8.5pt; opacity: .85; margin-top: 1px; }
+    .header-right { text-align: right; font-size: 8pt; opacity: .85; line-height: 1.6; }
+    .hashtag-big {
+      font-size: 13pt; font-weight: 800;
+      background: rgba(255,255,255,.18);
+      border-radius: 8px; padding: 3px 10px;
+      margin-top: 4px; display: inline-block;
+    }
+
+    /* ── 섹션 제목 ── */
+    .section-title {
+      font-size: 10pt; font-weight: 700; color: #5b21b6;
+      margin-bottom: 7px;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .section-title::after {
+      content: ''; flex: 1; height: 1px; background: #e5e7eb; margin-left: 4px;
+    }
+
+    /* ── 카드 ── */
+    .card {
+      background: #f9f8ff;
+      border: 1px solid #e9e3ff;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .card-orange { background: #fff8f0; border-color: #ffe4c0; }
+    .card-teal   { background: #f0fdfc; border-color: #b2f0ec; }
+    .card-amber  { background: #fffbeb; border-color: #fde68a; }
+    .card-gray   { background: #f8f8f8; border-color: #e5e7eb; }
+
+    /* ── 배경 목적 ── */
+    .purpose-box {
+      background: #faf8ff;
+      border-left: 3px solid #7c3aed;
+      border-radius: 0 8px 8px 0;
+      padding: 9px 12px;
+      font-size: 9.5pt;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    /* ── 단계별 ── */
+    .step {
+      display: flex; align-items: flex-start; gap: 8px;
+      background: #f9f9f9; border-radius: 8px; padding: 8px 10px;
+    }
+    .step-num {
+      width: 20px; height: 20px; flex-shrink: 0;
+      background: #7c3aed; color: white;
+      border-radius: 50%; font-size: 9pt; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-title { font-size: 9pt; font-weight: 700; color: #1f2937; }
+    .step-desc  { font-size: 8.5pt; color: #6b7280; margin-top: 1px; line-height: 1.4; }
+
+    /* ── 트랙 ── */
+    .track-emoji { font-size: 16pt; }
+    .track-name  { font-size: 9pt; font-weight: 700; margin: 3px 0 2px; }
+    .track-desc  { font-size: 7.5pt; color: #6b7280; line-height: 1.4; }
+
+    /* ── 시상 ── */
+    .award-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #e9e3ff;
+      background: #faf8ff;
+    }
+    .award-emoji { font-size: 14pt; }
+    .award-rank  { font-size: 9pt; font-weight: 700; color: #1f2937; flex: 1; }
+    .award-prize { font-size: 9pt; font-weight: 700; color: #5b21b6; }
+    .award-count { font-size: 8pt; color: #9ca3af; margin-left: 4px; }
+
+    /* ── 타임라인 ── */
+    .timeline-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    .timeline-period {
+      width: 58px; flex-shrink: 0;
+      font-size: 8pt; font-weight: 700; color: #7c3aed;
+      text-align: right;
+    }
+    .timeline-dot {
+      width: 8px; height: 8px; flex-shrink: 0;
+      background: #7c3aed; border-radius: 50%;
+      border: 2px solid white;
+      outline: 1px solid #7c3aed;
+    }
+    .timeline-content { font-size: 8.5pt; }
+    .timeline-content strong { color: #1f2937; }
+    .timeline-content span { color: #6b7280; margin-left: 4px; }
+
+    /* ── 해시태그 배너 ── */
+    .hashtag-banner {
+      background: linear-gradient(90deg, #7c3aed 0%, #5b21b6 100%);
+      color: white;
+      border-radius: 10px;
+      padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-top: 10px;
+    }
+    .hashtag-banner .ht { font-size: 14pt; font-weight: 800; letter-spacing: 0.5px; }
+    .hashtag-banner .ht-sub { font-size: 8pt; opacity: .85; margin-top: 2px; }
+    .qr-placeholder {
+      width: 55px; height: 55px;
+      background: white;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 7pt; color: #9ca3af; text-align: center;
+      line-height: 1.3; padding: 4px;
+    }
+
+    /* ── 관리 정보 ── */
+    .footer-bar {
+      border-top: 1px solid #e5e7eb;
+      margin-top: 10px; padding-top: 8px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 8pt; color: #9ca3af;
+    }
+    .url-badge {
+      background: #f3f0ff; border: 1px solid #d8b4fe;
+      color: #5b21b6; font-weight: 700; font-size: 9pt;
+      padding: 3px 10px; border-radius: 20px;
+    }
+
+    /* ── 인쇄 버튼 (화면만) ── */
+    .print-btn {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #7c3aed; color: white;
+      border: none; border-radius: 12px;
+      padding: 12px 22px; font-size: 13px; font-weight: 600;
+      cursor: pointer; box-shadow: 0 4px 14px rgba(124,58,237,.4);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .print-btn:hover { background: #6d28d9; }
+  </style>
+</head>
+<body>
+
+<!-- 화면: 인쇄 버튼 -->
+<button class="print-btn no-print" onclick="window.print()">
+  🖨 PDF로 저장
+</button>
+
+<div class="page">
+
+  <!-- ── 헤더 ── -->
+  <div class="header">
+    <div class="header-logo">
+      <div class="logo-box">평</div>
+      <div>
+        <div style="font-size:9pt; opacity:.85; letter-spacing:.5px;">2026 평안남도 뿌리이음 프로젝트</div>
+        <h1>평남 오리진</h1>
+        <div class="sub">나의 평남, 우리의 오리진 — 참여 안내문</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div>주관: 평안남도</div>
+      <div>공모 마감: 2026. 10. 31.</div>
+      <div class="hashtag-big">#평남오리진</div>
+    </div>
+  </div>
+
+  <!-- ── 배경 & 목적 ── -->
+  <div class="section-title">📌 배경 및 목적</div>
+  <div class="purpose-box" style="margin-bottom:12px;">
+    평안남도 실향민 1세대가 고령화되면서 그분들의 기억과 이야기가 사라질 위기에 처해 있습니다.
+    <strong>평남 오리진</strong>은 후손들이 각자의 방식으로 뿌리를 탐색·기록·재해석하고,
+    그 결과물을 디지털 박물관에 영구 보존하기 위해 평안남도가 직접 만든 온라인 플랫폼입니다.
+    역사를 계승하는 것을 넘어, <strong>지금의 언어로 평남을 다시 쓰는 프로젝트</strong>입니다.
+  </div>
+
+  <!-- ── 2단 레이아웃: 참여대상 + 단계별 참여방법 ── -->
+  <div class="row" style="margin-bottom:12px; align-items:flex-start;">
+
+    <!-- 왼쪽: 참여 대상 + 트랙 -->
+    <div class="col">
+      <div class="section-title">👥 참여 대상</div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div class="card" style="text-align:center; padding:8px;">
+          <div style="font-size:18pt;">👴</div>
+          <div style="font-size:8.5pt; font-weight:700; margin-top:3px;">1세대</div>
+          <div style="font-size:7.5pt; color:#6b7280;">직접 실향하신 분</div>
+        </div>
+        <div class="card" style="text-align:center; padding:8px;">
+          <div style="font-size:18pt;">👨</div>
+          <div style="font-size:8.5pt; font-weight:700; margin-top:3px;">2세대</div>
+          <div style="font-size:7.5pt; color:#6b7280;">자녀 세대</div>
+        </div>
+        <div class="card" style="text-align:center; padding:8px; border-color:#7c3aed; background:#f5f3ff;">
+          <div style="font-size:18pt;">🙋</div>
+          <div style="font-size:8.5pt; font-weight:700; margin-top:3px; color:#5b21b6;">3세대 ★</div>
+          <div style="font-size:7.5pt; color:#7c3aed;">주요 참여 대상</div>
+        </div>
+        <div class="card" style="text-align:center; padding:8px; border-color:#7c3aed; background:#f5f3ff;">
+          <div style="font-size:18pt;">👦</div>
+          <div style="font-size:8.5pt; font-weight:700; margin-top:3px; color:#5b21b6;">4세대 ★</div>
+          <div style="font-size:7.5pt; color:#7c3aed;">주요 참여 대상</div>
+        </div>
+      </div>
+
+      <div class="section-title">🎨 4가지 탐사 트랙</div>
+      <div class="grid-2">
+        <div class="card" style="text-align:center;">
+          <div class="track-emoji">📖</div>
+          <div class="track-name" style="color:#5b21b6;">스토리텔링</div>
+          <div class="track-desc">가족 인터뷰<br>에세이 · 역사기록</div>
+        </div>
+        <div class="card card-orange" style="text-align:center;">
+          <div class="track-emoji">🍜</div>
+          <div class="track-name" style="color:#c2410c;">라이프스타일</div>
+          <div class="track-desc">음식 · 복식<br>생활문화 재해석</div>
+        </div>
+        <div class="card card-teal" style="text-align:center;">
+          <div class="track-emoji">🗺</div>
+          <div class="track-name" style="color:#0f766e;">디지털/아트</div>
+          <div class="track-desc">VR · 지도<br>디지털 아트 · 숏폼</div>
+        </div>
+        <div class="card card-amber" style="text-align:center;">
+          <div class="track-emoji">🎬</div>
+          <div class="track-name" style="color:#b45309;">자유주제</div>
+          <div class="track-desc">웹툰 · 영상<br>형식 제한 없음</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 단계별 참여방법 -->
+    <div class="col">
+      <div class="section-title">📋 단계별 참여 방법</div>
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <div class="step-title">회원가입</div>
+            <div class="step-desc">pyeongnam-origin.vercel.app 접속 → 이메일·비밀번호로 30초 가입</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <div class="step-title">프로필 설정 (온보딩)</div>
+            <div class="step-desc">내 세대·출신 지역·탐사 트랙 선택 (선택 사항, 나중에 변경 가능)</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <div class="step-title">미션 센터에서 미션 선택</div>
+            <div class="step-desc">4개 트랙 중 원하는 미션을 골라 탐사 시작</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <div class="step-title">콘텐츠 제작 & 제출</div>
+            <div class="step-desc">
+              사진 → 직접 업로드<br>
+              영상 → YouTube / Instagram / TikTok에 <strong>#평남오리진</strong> 태그 후 링크 제출
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div>
+            <div class="step-title">심사 & 포인트 획득</div>
+            <div class="step-desc">제출 후 1~3일 내 심사 결과 통보, 승인 시 포인트·배지 지급</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="background:#f59e0b;">🏆</div>
+          <div>
+            <div class="step-title">2026년 12월 시상식</div>
+            <div class="step-desc">우수작 발표, 디지털 박물관 영구 전시, 앰배서더 위촉</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 시상 + 일정 ── -->
+  <div class="row" style="margin-bottom:10px; align-items:flex-start;">
+
+    <!-- 시상 -->
+    <div class="col">
+      <div class="section-title">🏆 시상 안내</div>
+      <div style="display:flex; flex-direction:column; gap:5px;">
+        <div class="award-row">
+          <span class="award-emoji">🥇</span>
+          <span class="award-rank">대상</span>
+          <span class="award-prize">50만원</span>
+          <span class="award-count">1명</span>
+        </div>
+        <div class="award-row">
+          <span class="award-emoji">🥈</span>
+          <span class="award-rank">최우수상</span>
+          <span class="award-prize">30만원</span>
+          <span class="award-count">1명</span>
+        </div>
+        <div class="award-row">
+          <span class="award-emoji">🥉</span>
+          <span class="award-rank">우수상</span>
+          <span class="award-prize">20만원</span>
+          <span class="award-count">1명</span>
+        </div>
+        <div class="award-row">
+          <span class="award-emoji">🌟</span>
+          <span class="award-rank">장려상</span>
+          <span class="award-prize">10만원</span>
+          <span class="award-count">7명</span>
+        </div>
+        <div style="font-size:7.5pt; color:#9ca3af; margin-top:2px;">
+          ※ 수상자 전원 앰배서더 위촉 · 평안남도 디지털 박물관 영구 전시
+        </div>
+      </div>
+    </div>
+
+    <!-- 일정 -->
+    <div class="col">
+      <div class="section-title">📅 2026 추진 일정</div>
+      <div class="timeline-row">
+        <div class="timeline-period">3~4월</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content"><strong>참여자 모집</strong><span>청년회·시군민회 홍보</span></div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-period">5~10월</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content"><strong>뿌리 탐색 활동</strong><span>미션 수행 기간</span></div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-period">10.31.</div>
+        <div class="timeline-dot" style="background:#ef4444; outline-color:#ef4444;"></div>
+        <div class="timeline-content"><strong style="color:#ef4444;">공모 마감 (최종)</strong></div>
+      </div>
+      <div class="timeline-row">
+        <div class="timeline-period">11월</div>
+        <div class="timeline-dot"></div>
+        <div class="timeline-content"><strong>심사</strong><span>도민관계자·전문가·청년투표단</span></div>
+      </div>
+      <div class="timeline-row" style="margin-bottom:0;">
+        <div class="timeline-period">12월</div>
+        <div class="timeline-dot" style="background:#f59e0b; outline-color:#f59e0b;"></div>
+        <div class="timeline-content"><strong>시상식 & 쇼케이스</strong></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── 해시태그 + QR + URL 배너 ── -->
+  <div class="hashtag-banner">
+    <div>
+      <div class="ht">#평남오리진</div>
+      <div class="ht-sub">영상 업로드 시 이 해시태그를 캡션에 꼭 달아주세요 (YouTube · Instagram · TikTok)</div>
+    </div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="qr-placeholder">QR코드<br>삽입</div>
+      <div style="text-align:right;">
+        <div style="font-size:8pt; opacity:.8; margin-bottom:4px;">플랫폼 접속</div>
+        <div style="font-size:9pt; font-weight:800; background:rgba(255,255,255,.15); padding:4px 10px; border-radius:8px;">
+          pyeongnam-origin.vercel.app
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 푸터 ── -->
+  <div class="footer-bar">
+    <div>주관: 평안남도 · 관리: 비서실 정책보좌 김명래 · © 2026 평안남도</div>
+    <div style="display:flex; align-items:center; gap:8px;">
+      <span>앱 설치 불필요 — 브라우저에서 바로 접속</span>
+      <span class="url-badge">pyeongnam-origin.vercel.app</span>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

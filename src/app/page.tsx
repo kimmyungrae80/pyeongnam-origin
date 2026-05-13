@@ -294,9 +294,13 @@ export default async function HomePage() {
               <div>
                 <div className="font-medium text-gray-700 mb-2">페이지</div>
                 <div className="space-y-1">
+                  <Link href="/guide" className="block hover:text-purple-700">참여 안내</Link>
                   <Link href="/archive" className="block hover:text-purple-700">아카이브</Link>
                   <Link href="/missions" className="block hover:text-purple-700">미션</Link>
                   <Link href="/faq" className="block hover:text-purple-700">자주 묻는 질문</Link>
+                  <a href="/pyeongnam-guide.html" target="_blank" rel="noopener noreferrer" className="block hover:text-purple-700">
+                    인쇄용 안내문 ↗
+                  </a>
                 </div>
               </div>
               <div>

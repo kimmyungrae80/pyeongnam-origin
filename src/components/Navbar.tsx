@@ -36,6 +36,7 @@ export default function Navbar() {
   }
 
   const navLinks = [
+    { href: '/guide', label: '가이드' },
     { href: '/archive', label: '아카이브' },
     { href: '/missions', label: '미션' },
     { href: '/faq', label: 'FAQ' },
