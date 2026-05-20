@@ -8,6 +8,8 @@ import { createClient } from '@/lib/supabase/server'
 export default async function HomePage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+
   // 통계 데이터 가져오기
   const [
     { count: userCount },
@@ -76,9 +78,15 @@ export default async function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/auth?mode=signup" className="btn-primary text-base px-8 py-3">
-                뿌리 찾기 시작하기 →
-              </Link>
+              {user ? (
+                <Link href="/dashboard" className="btn-primary text-base px-8 py-3">
+                  내 대시보드 →
+                </Link>
+              ) : (
+                <Link href="/auth?mode=signup" className="btn-primary text-base px-8 py-3">
+                  뿌리 찾기 시작하기 →
+                </Link>
+              )}
               <Link href="/archive" className="btn-outline text-base px-8 py-3">
                 아카이브 둘러보기
               </Link>
@@ -274,9 +282,15 @@ export default async function HomePage() {
               역사를 계승하는 시대를 넘어,<br />
               이제는 역사를 재해석하는 세대가 필요합니다.
             </p>
-            <Link href="/auth?mode=signup" className="btn-primary text-base px-10 py-3.5">
-              무료로 참여하기 →
-            </Link>
+            {user ? (
+              <Link href="/dashboard" className="btn-primary text-base px-10 py-3.5">
+                내 대시보드 →
+              </Link>
+            ) : (
+              <Link href="/auth?mode=signup" className="btn-primary text-base px-10 py-3.5">
+                무료로 참여하기 →
+              </Link>
+            )}
           </div>
         </section>
 

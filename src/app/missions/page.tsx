@@ -1,7 +1,6 @@
 // src/app/missions/page.tsx
 // P6 - 미션 센터
 
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import { createClient } from '@/lib/supabase/server'
@@ -15,14 +14,13 @@ export default async function MissionsPage({
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/auth')
 
-  // 미션 목록 + 내 완료 목록
+  // 미션 목록 + 내 완료 목록 (비로그인 시 submissions 없음)
   const [{ data: missions }, { data: submissions }] = await Promise.all([
     supabase.from('missions').select('*').eq('is_active', true).order('order_num'),
-    supabase.from('submissions')
-      .select('mission_id, status')
-      .eq('user_id', user.id),
+    user
+      ? supabase.from('submissions').select('mission_id, status').eq('user_id', user.id)
+      : Promise.resolve({ data: null }),
   ])
 
   const completedMissionIds = new Set(
@@ -164,10 +162,10 @@ export default async function MissionsPage({
 
                     {!isCompleted && !isSubmitted && (
                       <Link
-                        href={`/submit?mission=${mission.id}`}
+                        href={user ? `/submit?mission=${mission.id}` : '/auth'}
                         className="ml-auto btn-primary text-sm px-4 py-2"
                       >
-                        시작하기 →
+                        {user ? '시작하기 →' : '로그인 후 시작'}
                       </Link>
                     )}
                     {isCompleted && (

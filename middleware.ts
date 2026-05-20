@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // 미인증 사용자 → 보호된 경로 접근 시 로그인으로
-  const protectedPaths = ['/dashboard', '/missions', '/submit', '/admin']
+  const protectedPaths = ['/dashboard', '/submit', '/admin']
   const isProtected = protectedPaths.some(p => pathname.startsWith(p))
 
   if (!user && isProtected) {
