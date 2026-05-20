@@ -28,19 +28,15 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
 
-  // 로그인이 필요한 페이지들
+  // 미인증 사용자 → 보호된 경로 접근 시 로그인으로
   const protectedPaths = ['/dashboard', '/missions', '/submit', '/admin']
   const isProtected = protectedPaths.some(p => pathname.startsWith(p))
 
-  // 미인증 사용자 → 보호된 경로 접근 시 로그인으로
   if (!user && isProtected) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth'
     url.search = ''
-    url.searchParams.set('redirect', pathname)
-    const res = NextResponse.redirect(url)
-    supabaseResponse.cookies.getAll().forEach(c => res.cookies.set(c.name, c.value, c))
-    return res
+    return NextResponse.redirect(url)
   }
 
   // 이미 로그인된 상태로 /auth 접근 → 메인으로
@@ -48,9 +44,7 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
     url.search = ''
-    const res = NextResponse.redirect(url)
-    supabaseResponse.cookies.getAll().forEach(c => res.cookies.set(c.name, c.value, c))
-    return res
+    return NextResponse.redirect(url)
   }
 
   return supabaseResponse

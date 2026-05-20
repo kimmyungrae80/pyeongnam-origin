@@ -54,8 +54,7 @@ function AuthForm() {
           password: form.password,
         })
         if (error) throw error
-        const redirectTo = searchParams.get('redirect') || '/'
-        router.push(redirectTo)
+        router.push('/')
       }
     } catch (err: any) {
       if (err.message.includes('Invalid login credentials')) {
