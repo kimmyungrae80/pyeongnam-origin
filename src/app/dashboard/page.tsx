@@ -21,27 +21,24 @@ export default async function DashboardPage() {
     { data: missions },
     { data: rankingData },
   ] = await Promise.all([
-    supabase.from('profiles').select('*, families(name, origin_region, invite_code)').eq('id', user.id).single(),
+    supabase.from('profiles').select('*, families(name, origin_region, invite_code)').eq('id', user.id).maybeSingle(),
     supabase.from('submissions').select('*, missions(title, track, points)').eq('user_id', user.id).order('created_at', { ascending: false }),
     supabase.from('user_badges').select('*, badges(*)').eq('user_id', user.id),
     supabase.from('missions').select('*').eq('is_active', true).order('order_num').limit(3),
-    supabase.from('rankings').select('*').eq('id', user.id).single(),
+    supabase.from('rankings').select('*').eq('id', user.id).maybeSingle(),
   ])
 
-  // 온보딩은 강제하지 않음 — 프로필 미완성 시 배너 표시
-
   const approvedCount = submissions?.filter(s => s.status === 'approved').length ?? 0
-  const totalMissions = 10 // 전체 미션 수
+  const totalMissions = 10
   const progressPercent = Math.round((approvedCount / totalMissions) * 100)
 
-  // 트랙별 완료 수
   const trackCounts: Record<string, number> = {}
   submissions?.filter(s => s.status === 'approved').forEach(s => {
     const track = s.missions?.track
     if (track) trackCounts[track] = (trackCounts[track] || 0) + 1
   })
 
-  const familyData = profile.families as any
+  const familyData = (profile as any)?.families ?? null
 
   return (
     <>
