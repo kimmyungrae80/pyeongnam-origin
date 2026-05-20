@@ -13,20 +13,21 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth')
 
-  // 프로필 + 제출물 + 배지 가져오기
-  const [
-    { data: profile },
-    { data: submissions },
-    { data: userBadges },
-    { data: missions },
-    { data: rankingData },
-  ] = await Promise.all([
-    supabase.from('profiles').select('*, families(name, origin_region, invite_code)').eq('id', user.id).maybeSingle(),
-    supabase.from('submissions').select('*, missions(title, track, points)').eq('user_id', user.id).order('created_at', { ascending: false }),
-    supabase.from('user_badges').select('*, badges(*)').eq('user_id', user.id),
-    supabase.from('missions').select('*').eq('is_active', true).order('order_num').limit(3),
-    supabase.from('rankings').select('*').eq('id', user.id).maybeSingle(),
-  ])
+  // Promise.allSettled: 개별 쿼리 실패 시에도 페이지 렌더링 유지
+  const [profileResult, submissionsResult, userBadgesResult, missionsResult, rankingResult] =
+    await Promise.allSettled([
+      supabase.from('profiles').select('*, families(name, origin_region, invite_code)').eq('id', user.id).maybeSingle(),
+      supabase.from('submissions').select('*, missions(title, track, points)').eq('user_id', user.id).order('created_at', { ascending: false }),
+      supabase.from('user_badges').select('*, badges(*)').eq('user_id', user.id),
+      supabase.from('missions').select('*').eq('is_active', true).order('order_num').limit(3),
+      supabase.from('rankings').select('*').eq('id', user.id).maybeSingle(),
+    ])
+
+  const profile = profileResult.status === 'fulfilled' ? profileResult.value.data : null
+  const submissions = submissionsResult.status === 'fulfilled' ? submissionsResult.value.data : null
+  const userBadges = userBadgesResult.status === 'fulfilled' ? userBadgesResult.value.data : null
+  const missions = missionsResult.status === 'fulfilled' ? missionsResult.value.data : null
+  const rankingData = rankingResult.status === 'fulfilled' ? rankingResult.value.data : null
 
   const approvedCount = submissions?.filter(s => s.status === 'approved').length ?? 0
   const totalMissions = 10
@@ -34,7 +35,7 @@ export default async function DashboardPage() {
 
   const trackCounts: Record<string, number> = {}
   submissions?.filter(s => s.status === 'approved').forEach(s => {
-    const track = s.missions?.track
+    const track = (s.missions as any)?.track
     if (track) trackCounts[track] = (trackCounts[track] || 0) + 1
   })
 

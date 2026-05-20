@@ -80,7 +80,7 @@ export default async function HomePage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               {user ? (
                 <Link href="/dashboard" className="btn-primary text-base px-8 py-3">
-                  내 대시보드 →
+                  나의 탐사 이어가기 →
                 </Link>
               ) : (
                 <Link href="/auth?mode=signup" className="btn-primary text-base px-8 py-3">
@@ -284,7 +284,7 @@ export default async function HomePage() {
             </p>
             {user ? (
               <Link href="/dashboard" className="btn-primary text-base px-10 py-3.5">
-                내 대시보드 →
+                나의 탐사 이어가기 →
               </Link>
             ) : (
               <Link href="/auth?mode=signup" className="btn-primary text-base px-10 py-3.5">
