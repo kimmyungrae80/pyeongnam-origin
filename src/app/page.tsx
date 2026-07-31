@@ -282,15 +282,20 @@ export default async function HomePage() {
               역사를 계승하는 시대를 넘어,<br />
               이제는 역사를 재해석하는 세대가 필요합니다.
             </p>
-            {user ? (
-              <Link href="/dashboard" className="btn-primary text-base px-10 py-3.5">
-                나의 탐사 이어가기 →
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              {user ? (
+                <Link href="/dashboard" className="btn-primary text-base px-10 py-3.5">
+                  나의 탐사 이어가기 →
+                </Link>
+              ) : (
+                <Link href="/guide" className="btn-primary text-base px-10 py-3.5">
+                  참여 방법 알아보기 →
+                </Link>
+              )}
+              <Link href="/missions" className="btn-outline text-base px-10 py-3.5">
+                미션 둘러보기
               </Link>
-            ) : (
-              <Link href="/auth?mode=signup" className="btn-primary text-base px-10 py-3.5">
-                무료로 참여하기 →
-              </Link>
-            )}
+            </div>
           </div>
         </section>
 
