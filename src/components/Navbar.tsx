@@ -23,12 +23,12 @@ export default function Navbar() {
           .from('profiles')
           .select('*')
           .eq('id', user.id)
-          .single()
+          .maybeSingle()
         setProfile(data)
       }
     }
     getProfile()
-  }, [])
+  }, [supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()

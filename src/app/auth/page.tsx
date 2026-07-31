@@ -3,7 +3,7 @@
 // src/app/auth/page.tsx
 // P4 - 로그인 / 회원가입
 
-import { useState, Suspense } from 'react'
+import { useState, Suspense, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -16,6 +16,7 @@ function AuthForm() {
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const [form, setForm] = useState({
     email: '',
@@ -24,6 +25,18 @@ function AuthForm() {
   })
 
   const supabase = createClient()
+
+  // 이미 로그인된 사용자는 대시보드로 리다이렉트
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setIsLoggedIn(true)
+        router.push('/dashboard')
+      }
+    }
+    checkAuth()
+  }, [supabase, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

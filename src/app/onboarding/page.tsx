@@ -44,7 +44,7 @@ export default function OnboardingPage() {
           .from('families')
           .select('id')
           .eq('invite_code', form.invite_code)
-          .single()
+          .maybeSingle()
         if (family) family_id = family.id
       } else if (form.family_name) {
         const { data: family, error: familyErr } = await supabase
@@ -55,7 +55,7 @@ export default function OnboardingPage() {
             created_by: user.id,
           })
           .select()
-          .single()
+          .maybeSingle()
         if (familyErr) setError('가문 생성 오류: ' + familyErr.message)
         else if (family) family_id = family.id
       }
@@ -81,7 +81,7 @@ export default function OnboardingPage() {
         .from('profiles')
         .select('onboarding_completed')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
       if (!saved?.onboarding_completed) {
         setError('프로필 저장에 실패했습니다. 페이지를 새로고침 후 다시 시도해주세요.')
