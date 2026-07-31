@@ -60,7 +60,7 @@ function AuthForm() {
         })
         if (signInError) throw signInError
 
-        router.push('/')
+        router.push('/onboarding')
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: form.email,

@@ -35,12 +35,17 @@ export default function Navbar() {
     window.location.href = '/'
   }
 
-  const navLinks = [
-    { href: '/guide', label: '가이드' },
-    { href: '/archive', label: '아카이브' },
-    { href: '/missions', label: '미션' },
-    { href: '/faq', label: 'FAQ' },
-  ]
+  const navLinks = profile
+    ? [
+        { href: '/dashboard', label: '대시보드' },
+        { href: '/missions', label: '미션' },
+        { href: '/archive', label: '아카이브' },
+      ]
+    : [
+        { href: '/guide', label: '가이드' },
+        { href: '/archive', label: '아카이브' },
+        { href: '/faq', label: 'FAQ' },
+      ]
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-sm border-b border-gray-100">
