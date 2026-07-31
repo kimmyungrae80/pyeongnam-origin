@@ -26,17 +26,16 @@ function AuthForm() {
 
   const supabase = createClient()
 
-  // 이미 로그인된 사용자는 대시보드로 리다이렉트
+  // 이미 로그인된 사용자는 대시보드로 리다이렉트 (한 번만 체크)
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        setIsLoggedIn(true)
         router.push('/dashboard')
       }
     }
     checkAuth()
-  }, [supabase, router])
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
