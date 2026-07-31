@@ -90,15 +90,17 @@ export default function Navbar() {
                 </span>
               </div>
 
-              {/* 대시보드 */}
-              <Link href="/dashboard">
+              {/* 프로필 (마이페이지) */}
+              <Link href="/profile">
                 <div className="flex items-center gap-2 hover:bg-gray-50 px-3 py-1.5 rounded-lg transition-colors">
                   <div className="w-7 h-7 bg-purple-100 rounded-full flex items-center justify-center">
                     <span className="text-purple-700 text-xs font-medium">
                       {profile.name.charAt(0)}
                     </span>
                   </div>
-                  <span className="text-sm text-gray-700">{profile.name}</span>
+                  <div className="text-sm">
+                    <div className="text-gray-900 font-medium">{profile.name}</div>
+                  </div>
                 </div>
               </Link>
 
@@ -147,9 +149,11 @@ export default function Navbar() {
           <div className="border-t border-gray-100 mt-3 pt-3">
             {profile ? (
               <div>
-                <div className="text-sm text-gray-700 mb-2">{profile.name} ({profile.points}p)</div>
-                <Link href="/dashboard" className="block py-2 text-sm text-purple-700">대시보드</Link>
-                <button onClick={handleLogout} className="block py-2 text-sm text-gray-400">로그아웃</button>
+                <div className="text-sm font-medium text-gray-900 mb-3">
+                  {profile.name} · {profile.points}p
+                </div>
+                <Link href="/profile" className="block py-2 text-sm text-purple-700">마이페이지</Link>
+                <button onClick={handleLogout} className="block py-2 text-sm text-gray-500">로그아웃</button>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
