@@ -224,7 +224,7 @@ function AuthForm() {
 
 export default function AuthPage() {
   return (
-    <Suspense>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">로딩 중...</div>}>
       <AuthForm />
     </Suspense>
   )
